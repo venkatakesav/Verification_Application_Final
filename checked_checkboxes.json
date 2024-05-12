@@ -1,0 +1,44 @@
+{
+    "1291_1_834_1_ViewFilesDTC.aspx_fp.png": {
+        "0": {
+            "q_a_pair": {
+                "question": "What is the title of the document?",
+                "answer": "Uttar Pradesh Shasan"
+            },
+            "Type": "Extractive",
+            "Layout Region": "Date Block",
+            "Language": "English",
+            "Complexity": "Complex"
+        },
+        "1": {
+            "q_a_pair": {
+                "question": "What is the file number of the document?",
+                "answer": "6151/VI-6-2014-29(4)/2011"
+            },
+            "Type": "Extractive",
+            "Layout Region": "Addressed To Block",
+            "Language": "English",
+            "Complexity": "Layout Based"
+        },
+        "2": {
+            "q_a_pair": {
+                "question": "What is the date of the document?",
+                "answer": "15 December, 2014"
+            },
+            "Type": "Extractive",
+            "Layout Region": "Address of Issuing Authority",
+            "Language": "English",
+            "Complexity": "Layout Based",
+            "REMOVE": "Remove"
+        },
+        "3": {
+            "q_a_pair": {
+                "question": "What is the order number and date mentioned in the document?",
+                "answer": "Order number 108/VI-6-29(4)/2011, dated 19.11.2011"
+            },
+            "Layout Region": "Circular ID",
+            "Language": "English",
+            "Complexity": "Layout Based"
+        }
+    }
+}

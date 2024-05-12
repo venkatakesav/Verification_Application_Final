@@ -35,7 +35,8 @@ def index():
 # API endpoint to get image and corresponding questions/answers by entry number
 @app.route('/image_data/<int:entry_number>')
 def get_image_data(entry_number):
-    global entries
+    global entries, checked_checkboxes
+
     # Ensure the entry number is within range
     if entry_number < 0 or entry_number >= len(entries):
         return jsonify({'error': 'Invalid entry number'})
@@ -46,14 +47,17 @@ def get_image_data(entry_number):
 
     print("File name: ", image_filename)
 
-    qa_labels = []
+    # Load the checkbox log file dynamically
+    with open(LOG_FILE, 'r') as log_file:
+        checked_checkboxes = json.load(log_file)
 
-    # Load the checkbox log file
-    if image_filename in checked_checkboxes.keys():
-        for qa_label in checked_checkboxes[image_filename]:
-            qa_labels.append(qa_label)
+    # Check if the image filename exists in the checked_checkboxes
+    if image_filename in checked_checkboxes:
+        qa_labels = checked_checkboxes[image_filename]
+    else:
+        qa_labels = {}
 
-    print("The QA Labels of the Following Document is as follows", qa_labels)
+    print("The data logged of the Following Document is as follows", qa_labels)
 
     # Construct response
     response = {
@@ -62,6 +66,8 @@ def get_image_data(entry_number):
         'entry_number': entry_number,  # Include the entry number in the response
         'qa_labels': qa_labels
     }
+
+    print(response)
 
     return jsonify(response)
 

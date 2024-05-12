@@ -1,94 +1,104 @@
 document.addEventListener('DOMContentLoaded', function() {
   let currentEntry = 0; // Variable to keep track of the current entry number
 
-  // Function to fetch image data from Flask backend
-  function getImageData(entryNumber) {
-      fetch(`/image_data/${entryNumber}`)
-          .then(response => response.json())
-          .then(data => {
-              console.log(data)
-              console.log('Entry Nunber', data)
-              // Set image source dynamically
-              document.getElementById('displayedImage').src = data.image;
+    // Function to fetch image data from Flask backend
+    function getImageData(entryNumber) {
+        fetch(`/image_data/${entryNumber}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                console.log('Entry Number', entryNumber);
+    
+                // Set image source dynamically
+                document.getElementById('displayedImage').src = data.image;
+    
+                // Clear previous questions and answers
+                const qaList = document.getElementById('qaList');
+                qaList.innerHTML = '';
+    
+                // Populate questions and answers
+                data.questions_answers.forEach((qa, index) => {
+                    const questionItem = document.createElement('li');
+                    const questionHeader = document.createElement('h3');
+                    questionHeader.textContent = qa.question;
+                    questionItem.appendChild(questionHeader);
+    
+                    const answerParagraph = document.createElement('p');
+                    answerParagraph.textContent = qa.answer;
+                    questionItem.appendChild(answerParagraph);
+    
+                    // Add checkboxes for each question
+                    const typeCheckboxes = createCheckboxGroup('Type', ['Abstractive', 'Extractive'], `type-${index}`);
+                    const layoutCheckboxes = createCheckboxGroup('Layout Region', ['Signature Block', 'Circular ID', 'Reference Block', 'Table Block', 'Subject Block', 'Header Block', 'Copy Forwarded To Block', 'Addressed To Block', 'Address of Issuing Authority', 'Date Block', 'Address Block', 'Stamps and Seals Block', 'Logo Block', 'Body Block'], `layout-${index}`);
+                    const languageCheckboxes = createCheckboxGroup('Language', ['Hindi', 'English', 'Other'], `language-${index}`);
+                    const complexityCheckboxes = createCheckboxGroup('Complexity', ['Simple', 'Complex', 'Layout Based'], `complexity-${index}`);
+                    const removeCheckboxes = createCheckboxGroup('REMOVE', ['Remove'], `remove-${index}`);
 
-              // Clear previous questions and answers
-              const qaList = document.getElementById('qaList');
-              qaList.innerHTML = '';
-              console.log('data.qa_labels', data.qa_labels)
+                    // Check checkboxes based on qa_labels data
+                    Object.keys(data.qa_labels).forEach(key => {
+                        const qa_label = data.qa_labels[key];
+                        const qaPairKey = `${qa_label.q_a_pair.question}-${qa_label.q_a_pair.answer}`;
 
-              // Populate questions and answers
-              data.questions_answers.forEach((qa, index) => {
-                  const questionItem = document.createElement('li');
-                  const questionHeader = document.createElement('h3');
-                  questionHeader.textContent = qa.question;
-                  questionItem.appendChild(questionHeader);
+                        question_key = qa_label.q_a_pair.question;
+                        answer_key = qa_label.q_a_pair.answer;
 
-                  const answerParagraph = document.createElement('p');
-                  answerParagraph.textContent = qa.answer;
-                  questionItem.appendChild(answerParagraph);
+                        // Check question and answer, if they match
+                        if (qa.question === question_key && qa.answer === answer_key) {
+                            console.log('Matched Question:', qa.question);
+                            console.log('Matched Answer:', qa.answer);
 
-                  // Add checkboxes for each question
-                  const typeCheckboxes = createCheckboxGroup('Type', ['Abstractive', 'Extractive'], `type-${index}`);
-                  const layoutCheckboxes = createCheckboxGroup('Layout Region', ['Signature Block', 'Circular ID', 'Reference Block', 'Table Block', 'Subject Block', 'Header Block', 'Copy Forwarded To Block', 'Addressed To Block', 'Address of Issuing Authority', 'Date Block', 'Address Block', 'Stamps and Seals Block', 'Logo Block', 'Body Block'], `layout-${index}`);
-                  const languageCheckboxes = createCheckboxGroup('Language', ['Hindi', 'English', 'Other'], `language-${index}`);
-                  const complexityCheckboxes = createCheckboxGroup('Complexity', ['Simple', 'Complex', 'Layout Based'], `complexity-${index}`);
-                  const removeCheckboxes = createCheckboxGroup('REMOVE', ['Remove'], `remove-${index}`);
+                        // Check Type checkbox
+                        typeCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (qa_label.hasOwnProperty('Type') && checkbox.value === qa_label.Type) {
+                                checkbox.checked = true;
+                            }
+                        });
 
-                  // Check checkboxes based on qa_labels data
-                  data.qa_labels.forEach(qa_label => {
-                      if (qa_label.question === qa.question) {
-                          // Check Type checkbox
-                          typeCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                              if (checkbox.value === qa_label.Type) {
-                                  checkbox.checked = true;
-                              }
-                          });
+                        // Check Layout Region checkbox
+                        layoutCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (qa_label.hasOwnProperty('Layout Region') && checkbox.value === qa_label['Layout Region']) {
+                                checkbox.checked = true;
+                            }
+                        });
 
-                          // Check Layout Region checkbox
-                          layoutCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                              if (checkbox.value === qa_label['Layout Region']) {
-                                  checkbox.checked = true;
-                              }
-                          });
+                        // Check Language checkbox
+                        languageCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (qa_label.hasOwnProperty('Language') && checkbox.value === qa_label.Language) {
+                                checkbox.checked = true;
+                            }
+                        });
 
-                          // Check Language checkbox
-                          languageCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                              if (checkbox.value === qa_label.Language) {
-                                  checkbox.checked = true;
-                              }
-                          });
+                        // Check Complexity checkbox
+                        complexityCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (qa_label.hasOwnProperty('Complexity') && checkbox.value === qa_label.Complexity) {
+                                checkbox.checked = true;
+                            }
+                        });
 
-                          // Check Complexity checkbox
-                          complexityCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                              if (checkbox.value === qa_label.Complexity) {
-                                  checkbox.checked = true;
-                              }
-                          });
+                        // Check REMOVE checkbox
+                        removeCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            if (qa_label.hasOwnProperty('REMOVE') && checkbox.value === qa_label.REMOVE) {
+                                checkbox.checked = true;
+                                questionItem.style.textDecoration = 'line-through';
+                            }
+                        });
+                        }
+                    });
+                    questionItem.appendChild(typeCheckboxes);
+                    questionItem.appendChild(layoutCheckboxes);
+                    questionItem.appendChild(languageCheckboxes);
+                    questionItem.appendChild(complexityCheckboxes);
+                    questionItem.appendChild(removeCheckboxes);
 
-                          // Check REMOVE checkbox
-                          removeCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                              if (checkbox.value === qa_label.REMOVE) {
-                                  checkbox.checked = true;
-                                  questionItem.style.textDecoration = 'line-through';
-                              }
-                          });
-                      }
-                  });
+                    qaList.appendChild(questionItem);
 
-                  questionItem.appendChild(typeCheckboxes);
-                  questionItem.appendChild(layoutCheckboxes);
-                  questionItem.appendChild(languageCheckboxes);
-                  questionItem.appendChild(complexityCheckboxes);
-                  questionItem.appendChild(removeCheckboxes);
-
-                  qaList.appendChild(questionItem);
-              });
-
-              // Update the displayed entry number
-              document.getElementById('entryNumber').textContent = `Entry Number: ${entryNumber}`;
-          })
-          .catch(error => console.error('Error fetching image data:', error));
-  }
+                });
+    
+                // Update the displayed entry number
+                document.getElementById('entryNumber').textContent = `Entry Number: ${entryNumber}`;
+            })
+            .catch(error => console.error('Error fetching image data:', error));
+    }    
 
     function createCheckboxGroup(label, options, groupName) {
       const container = document.createElement('div');

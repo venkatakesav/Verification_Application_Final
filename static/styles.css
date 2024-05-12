@@ -151,3 +151,29 @@ body {
   border-radius: 5px;
   padding: 5px;
 }
+
+/* Style for input elements */
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Style for placeholder text */
+input[type="text"]::placeholder {
+  color: #999;
+}
+
+/* Style for checked checkboxes */
+input[type="checkbox"]:checked + label {
+  font-weight: bold;
+}
+
+/* Style for labels */
+label {
+  margin-left: 5px;
+}

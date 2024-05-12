@@ -14,7 +14,6 @@ with open(JSON_FILE, 'r') as file:
     data = json.load(file)
     # Convert data to a list of (image_name, questions_answers) tuples
     entries = list(enumerate(data))  # Enumerate to assign numbers to entries
-    print("Entries: ", len(entries))
 
 # Check if the log file exists and is a regular file
 if os.path.exists(LOG_FILE) and os.path.isfile(LOG_FILE):
@@ -45,8 +44,6 @@ def get_image_data(entry_number):
     image_filename = entry[1]['file_name']
     questions_answers = entry[1]['question_answer_pairs']
 
-    print("File name: ", image_filename)
-
     # Load the checkbox log file dynamically
     with open(LOG_FILE, 'r') as log_file:
         checked_checkboxes = json.load(log_file)
@@ -57,8 +54,6 @@ def get_image_data(entry_number):
     else:
         qa_labels = {}
 
-    print("The data logged of the Following Document is as follows", qa_labels)
-
     # Construct response
     response = {
         'image': f'./static/images/{image_filename}',
@@ -66,8 +61,6 @@ def get_image_data(entry_number):
         'entry_number': entry_number,  # Include the entry number in the response
         'qa_labels': qa_labels
     }
-
-    print(response)
 
     return jsonify(response)
 
@@ -77,13 +70,14 @@ def get_total_entries():
     global entries
     return jsonify({'total_entries': len(entries)})
 
-# Route to handle logging checked checkboxes
+# Flask Route to Handle Logging Checked Checkboxes
 @app.route('/log_checked_checkboxes', methods=['POST'])
 def log_checked_checkboxes():
     try:
-        file_name = request.form['file_name']  # Here the file name is of the format File_{number}.txt
+        file_name = request.form['file_name']
         file_number = int(file_name.split('_')[1].split('.')[0])
         doc_id = entries[file_number][1]['file_name']
+        print("Hello")
 
         checked_values = request.form.getlist('checked_values[]')
 
@@ -101,22 +95,32 @@ def log_checked_checkboxes():
             answer = checked_value['answer']
             annotation = list(checked_value.keys())[-1]
 
+            edited_question = checked_value['edited_q']
+            edited_answer = checked_value['edited_a']
+
             # Check if the question already exists
             existing_qa_pair_index = None
             for qa_index, data in checked_checkboxes[doc_id].items():
-                if data['q_a_pair']['question'] == question:
+                if data['q_a_pair']['original_question'] == question:
                     existing_qa_pair_index = qa_index
                     break
 
             if existing_qa_pair_index is not None:
                 # Update annotation for existing question-answer pair
                 checked_checkboxes[doc_id][existing_qa_pair_index][annotation] = checked_value[annotation]
+                checked_checkboxes[doc_id][existing_qa_pair_index]['q_a_pair']['edited_question'] = edited_question
+                checked_checkboxes[doc_id][existing_qa_pair_index]['q_a_pair']['edited_answer'] = edited_answer
             else:
                 # Assign a new index if the question is not found
                 qa_index = len(checked_checkboxes[doc_id])
 
                 # Store QA pair along with annotations
-                qa_pair = {'question': question, 'answer': answer}
+                qa_pair = {
+                    'original_question': question,
+                    'original_answer': answer,
+                    'edited_question': '', 
+                    'edited_answer': ''  
+                }
                 checked_checkboxes[doc_id][qa_index] = {'q_a_pair': qa_pair}
 
                 # Store annotations

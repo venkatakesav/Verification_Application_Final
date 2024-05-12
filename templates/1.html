@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Verification Tool</title>
+  <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body>
+  <div class="navigation">
+    <input type="number" id="entryNumberInput" min="0" max="999" placeholder="Enter Entry Number">
+    <button id="goToEntryButton">Go to Entry</button>
+  </div>
+  <div class="container">
+    <div class="image-container">
+      <img id="displayedImage" src="" alt="Displayed Image">
+    </div>
+    <div class="info-container">
+      <h2 id="entryNumber">Entry Number: 0</h2>
+      <h2>Questions and Answers</h2>
+      <div class="qa-scroll-box" id="qaBox">
+        <ul id="qaList">
+          <!-- Dynamically populate question-answer pairs here -->
+        </ul>
+      </div>
+    </div>
+  </div>
+  <button id="previousButton">Previous</button>
+  <button id="nextButton">Next</button>
+  <button id="logCheckedButton">Log Checked</button>
+  <script src="./static/script.js"></script>
+</body>
+</html>

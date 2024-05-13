@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', function () {
         data.questions_answers.forEach((qa, index) => {
           const questionItem = document.createElement('li');
           const questionHeader = document.createElement('h3');
-          questionHeader.textContent = qa.question;
+          questionHeader.textContent = `Q${index + 1}: ${qa.question}`;
           questionItem.appendChild(questionHeader);
-
+  
           const answerParagraph = document.createElement('p');
-          answerParagraph.textContent = qa.answer;
+          answerParagraph.textContent = `A${index + 1}: ${qa.answer}`;
           questionItem.appendChild(answerParagraph);
 
           // Add input fields for edited question and answer
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Update the displayed entry number
-        document.getElementById('entryNumber').textContent = `Entry Number: ${entryNumber}`;
+        document.getElementById('entryNumber').textContent = `Document: ${data.document_name}, Entry Number: ${entryNumber}`;
       })
       .catch(error => console.error('Error fetching image data:', error));
   }

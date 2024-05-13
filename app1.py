@@ -36,6 +36,7 @@ def index():
     return render_template('1.html', username=username)
 
 @app.route('/image_data/<int:entry_number>')
+@app.route('/image_data/<int:entry_number>')
 def get_image_data(entry_number):
     if entry_number < 0 or entry_number >= len(entries):
         return jsonify({'error': 'Invalid entry number'})
@@ -56,6 +57,7 @@ def get_image_data(entry_number):
         'image': f'./static/images/{image_filename}',
         'questions_answers': questions_answers,
         'entry_number': entry_number,
+        'document_name': image_filename,  # Include the document name in the response
         'qa_labels': qa_labels
     }
     return jsonify(response)

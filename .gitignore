@@ -1,3 +1,7 @@
 static/images
 
 *.png
+
+/node_modules
+
+package*

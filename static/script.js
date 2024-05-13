@@ -245,6 +245,24 @@ document.addEventListener('DOMContentLoaded', function () {
       formData.append('file_name', `File_${currentEntry}.txt`);
       checkedValues.forEach(value => formData.append('checked_values[]', JSON.stringify(value)));
       console.log("Logging", formData)
+
+      // Get username from localStorage
+      const username = localStorage.getItem('username');
+      if (username) {
+        formData.append('username', username);
+        console.log("The Username is", username)
+      } else {
+        // If username not found in localStorage, try getting it from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlUsername = urlParams.get('username');
+        if (urlUsername) {
+          formData.append('username', urlUsername);
+        } else {
+          console.error('Username not found.');
+          return;
+        }
+      }
+
       fetch('/log_checked_checkboxes', {
         method: 'POST',
         body: formData

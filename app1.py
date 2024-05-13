@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect
 import os
 import json
 
@@ -26,10 +26,20 @@ else:
     with open(LOG_FILE, 'w') as file:
         json.dump(checked_checkboxes, file)
 
-# Route to render the HTML template
+# Route to render the login page
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+# Route to render the HTML template after successful login
 @app.route('/')
 def index():
-    return render_template('1.html')
+    # Check if username is provided in the query parameters
+    username = request.args.get('username')
+    print("THE USERNAME IS", username)
+    if not username:
+        return redirect('/login')  # Redirect to login page if username is not provided
+    return render_template('1.html', username=username)
 
 # API endpoint to get image and corresponding questions/answers by entry number
 @app.route('/image_data/<int:entry_number>')
@@ -74,6 +84,13 @@ def get_total_entries():
 @app.route('/log_checked_checkboxes', methods=['POST'])
 def log_checked_checkboxes():
     try:
+        print("Request Form", request.form) 
+
+        username = request.form['username']  # Get username from request arguments
+        print("The UserName is", username)
+        # if not username:
+        #     return jsonify({'success': False, 'error': 'Username not provided'})
+
         file_name = request.form['file_name']
         file_number = int(file_name.split('_')[1].split('.')[0])
         doc_id = entries[file_number][1]['file_name']
@@ -119,7 +136,8 @@ def log_checked_checkboxes():
                     'original_question': question,
                     'original_answer': answer,
                     'edited_question': '', 
-                    'edited_answer': ''  
+                    'edited_answer': '',
+                    'username': username  # Include the username in the QA pair
                 }
                 checked_checkboxes[doc_id][qa_index] = {'q_a_pair': qa_pair}
 

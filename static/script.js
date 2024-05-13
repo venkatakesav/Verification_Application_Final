@@ -1,6 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
   let currentEntry = 0; // Variable to keep track of the current entry number
 
+  // Connect to Socket.IO server
+  const socket = io();
+
+  // Listen for 'update' event from server
+  socket.on('update', function (data) {
+    console.log('Update received:', data);
+    console.log('Current entry file expected:', `File_${currentEntry}.txt`);
+    if (data.file_name === `File_${currentEntry}.txt`) {
+        console.log('Updating data for entry:', currentEntry);
+        getImageData(currentEntry);  // Refresh the data on update
+    } else {
+        console.log('Update not related to current entry:', currentEntry);
+    }
+  });
+
   function getImageData(entryNumber) {
     fetch(`/image_data/${entryNumber}`)
       .then(response => response.json())
